@@ -59,13 +59,15 @@ class Preprocessor:
 
     def tokenize(self, text):
         return self.tokenizer.tokenize(text)
+    
+    def lem_words(self, text):
+        return [self.lm.lemmatize(word) for word in text]
 
-    def remove_stopwords(self, text):
-        return [w for w in text if not w.lower() in self.stop_words]
 
-    def stem_words(self, text):
-        return [self.ps.stem(word) for word in text]
+    # def remove_stopwords(self, text):
+    #     return [w for w in text if not w.lower() in self.stop_words]
 
+   
     def preprocess(self, text):
         text = self.expand_contractions(text)
         text = self.tokenize(text)
