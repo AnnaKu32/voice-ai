@@ -17,7 +17,6 @@ def clean_text(text):
     lemm_tokens = [lemmatizer.lemmatize(word) for word in text]
     return lemm_tokens
 
-# I am using bag of words model to convert text data into numerical data
 def bag_of_words(text, vocab):
     tokens = clean_text(text)
     bag = [0] * len(vocab)
