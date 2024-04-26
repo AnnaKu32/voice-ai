@@ -14,7 +14,7 @@ import numpy as np
 import random
 
 
-intents = json.loads(open('intents.json').read())
+data = json.loads(open('intents.json').read())
 
 # ---------------------------------- Preprocessing ----------------------------------
 words = []
@@ -23,7 +23,7 @@ data_x = []
 data_y = []
 ignore_words = ['?', '!', '.']
 
-for intent in intents['intents']:
+for intent in data['intents']:
     for pattern in intent['patterns']:
         tokens = nltk.word_tokenize(pattern)
         words.extend(tokens)
@@ -80,6 +80,6 @@ model.compile(loss='categorical_crossentropy',
               optimizer=adam, 
               metrics=['accuracy'])
 print(model.summary())
-model.fit(np.array(train_x), np.array(train_y), epochs=200, batch_size=5, verbose=1)
+model.fit(np.array(train_x), np.array(train_y), epochs=100, batch_size=5, verbose=1)
 
 

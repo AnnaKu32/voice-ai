@@ -1,75 +1,56 @@
+from model import model
+
+import numpy as np
+import re
+import random
+import nltk
 from nltk.tokenize import NLTKWordTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer, PorterStemmer
-
-import re
-import nltk
 nltk.download('stopwords')
-
 SYMBOLS = '{}()[]\\.,:;+-_@*/#&$...…|<>=~^!?”“’"'
+STOPWORDS = set(stopwords.words('english'))
 
-class Preprocessor:
-    def __init__(self):
-        self.tokenizer = NLTKWordTokenizer()
-        self.lm = WordNetLemmatizer()
-        self.ps = PorterStemmer()
-        self.stop_words = set(stopwords.words('english'))
+def clean_text(text):
+    lemmatizer = WordNetLemmatizer()
+    tokens = nltk.word_tokenize(text)
+    lemm_tokens = [lemmatizer.lemmatize(word) for word in text]
+    return lemm_tokens
 
-    def expand_contractions(self, text):
-        contractions = {
-            "isn't": 'is not',
-            "he's": 'he is',
-            "wasn't": 'was not',
-            "there's": 'there is',
-            "couldn't": 'could not',
-            "won't": 'will not',
-            "they're": 'they are',
-            "she's": 'she is',
-            "wouldn't": 'would not',
-            "haven't": 'have not',
-            "you've": 'you have',
-            "what's": 'what is',
-            "weren't": 'were not',
-            "we're": 'we are',
-            "hasn't": 'has not',
-            "you'd": 'you would',
-            "shouldn't": 'should not',
-            "let's": 'let us',
-            "they've": 'they have',
-            "i'm": 'i am',
-            "im": 'i am',
-            "we've": 'we have',
-            "it's": 'it is',
-            "don't": 'do not',
-            "that's": 'that is',
-            "i'm": 'i am',
-            "it's": 'it is',
-            "she's": 'she is',
-            "he's": 'he is',
-            "i'm": 'i am',
-            "i'd": 'i would',
-            "he's": 'he is',
-            "there's": 'there is'
-        }
+# I am using bag of words model to convert text data into numerical data
+def bag_of_words(text, vocab):
+    tokens = clean_text(text)
+    bag = [0] * len(vocab)
+    for idx, word in enumerate(vocab):
+        if word in tokens:
+            bag[idx] = 1
+    return bag
 
-        text = text.lower()
-        for contraction, expansion in contractions.items():
-            text = re.sub(contraction, expansion, text)
-        return text
+def pred_class(text, vocab, labels):
+    bow = bag_of_words(text, vocab)
+    res = model.predict(np.array([bow]))[0]
+    ERROR_THRESHOLD = 0.25
+    results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
+    results.sort(key=lambda x: x[1], reverse=True)
+    return_list = []
+    for r in results:
+        return_list.append({'intent': labels[r[0]], 'probability': str(r[1])})
+    return return_list
 
-    def tokenize(self, text):
-        return self.tokenizer.tokenize(text)
+def get_response(intents_list, intents_json):
+    tag = intents_list[0]['intent']
+    list_of_intents = intents_json['intents']
+    for i in list_of_intents:
+        if i['tag'] == tag:
+            result = random.choice(i['responses'])
+            break
+    return result
+
+
     
-    def lem_words(self, text):
-        return [self.lm.lemmatize(word) for word in text]
 
 
-    # def remove_stopwords(self, text):
-    #     return [w for w in text if not w.lower() in self.stop_words]
 
-   
-    def preprocess(self, text):
-        text = self.expand_contractions(text)
-        text = self.tokenize(text)
-        text = self.remove_stopwords(text)
-        return text
+
+
+
