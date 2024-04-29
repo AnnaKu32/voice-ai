@@ -69,7 +69,9 @@ train_y = list(training[:, 1])
 
 # ---------------------------------- Model ----------------------------------
 model = keras.Sequential()
-model.add(layers.Dense(128, input_shape=(len(train_x[0]),), activation='relu'))
+model.add(layers.Dense(256, input_shape=(len(train_x[0]),), activation='relu'))
+model.add(layers.Dropout(0.5))
+model.add(layers.Dense(128, activation='relu'))
 model.add(layers.Dropout(0.5))
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dropout(0.5))
@@ -80,6 +82,6 @@ model.compile(loss='categorical_crossentropy',
               optimizer=adam, 
               metrics=['accuracy'])
 print(model.summary())
-model.fit(np.array(train_x), np.array(train_y), epochs=100, batch_size=5, verbose=1)
+model.fit(np.array(train_x), np.array(train_y), epochs=200, batch_size=5, verbose=1)
 
 

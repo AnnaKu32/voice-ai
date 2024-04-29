@@ -8,6 +8,7 @@ from nltk.tokenize import NLTKWordTokenizer
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 nltk.download('stopwords')
+
 SYMBOLS = '{}()[]\\.,:;+-_@*/#&$...…|<>=~^!?”“’"'
 STOPWORDS = set(stopwords.words('english'))
 

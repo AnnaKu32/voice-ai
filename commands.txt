@@ -1,0 +1,2 @@
+source env/Scripts/activate - activate env
+installed packages: numpy, tensorflow, speech_recognition, keras_models
